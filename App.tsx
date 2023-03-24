@@ -66,7 +66,15 @@ function App() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: 'Overview' }}
+          options={{
+            title: 'Overview',
+            headerRight: () => (
+              <Button
+                onPress={() => alert('This is a button!')}
+                title="Info"
+              />
+            )
+          }}
         />
         <Stack.Screen
           name="Details"
