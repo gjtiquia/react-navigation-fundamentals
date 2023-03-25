@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, View, Text } from 'react-native';
+import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import {
@@ -10,10 +10,16 @@ import {
 
 import {
   createNativeStackNavigator,
-  NativeStackScreenProps
+  NativeStackScreenProps,
+  NativeStackHeaderProps
 } from '@react-navigation/native-stack';
 
+import { getHeaderTitle } from '@react-navigation/elements';
+
 import {
+  Text,
+  Button,
+  Appbar,
   adaptNavigationTheme,
   Provider as PaperProvider,
   MD3DarkTheme,
@@ -27,8 +33,8 @@ const { LightTheme, DarkTheme } = adaptNavigationTheme({
   reactNavigationDark: NavigationDarkTheme,
 });
 
-const CombinedDefaultTheme = merge(MD3DarkTheme, LightTheme);
-const CombinedDarkTheme = merge(MD3LightTheme, DarkTheme);
+const CombinedDefaultTheme = merge(MD3LightTheme, LightTheme);
+const CombinedDarkTheme = merge(MD3DarkTheme, DarkTheme);
 
 type RootStackParamList = {
   Home: undefined; // undefined => optional route.params
@@ -39,10 +45,9 @@ type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 function HomeScreen({ route, navigation }: HomeScreenProps) {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
-      <Button
-        title="Go to Details"
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+      <Text variant="bodyMedium">Home Screen</Text>
+      <Button mode="contained"
         onPress={() => {
           /* 1. Navigate to the Details route with params */
           navigation.navigate('Details', {
@@ -50,7 +55,9 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
             otherParam: 'anything you want here'
           });
         }}
-      />
+      >
+        Go to Details
+      </Button>
     </View>
   );
 }
@@ -62,24 +69,32 @@ function DetailsScreen({ route, navigation }: DetailsScreenProps) {
   const { itemId, otherParam } = route.params;
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Details Screen</Text>
-      <Text>itemId: {JSON.stringify(itemId)}</Text>
-      <Text>otherParam: {JSON.stringify(otherParam)}</Text>
-      <Button
-        title="Go to Details... again"
-
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+      <Text variant="bodyMedium">Details Screen</Text>
+      <Text variant="bodyMedium">itemId: {JSON.stringify(itemId)}</Text>
+      <Text variant="bodyMedium">otherParam: {JSON.stringify(otherParam)}</Text>
+      <Button mode="contained"
         // navigation.navigate('Details') will do nothing as we are already in the Details screen
         // using navigation.push('Details') will allow us to add a new route to the navigation stack
         onPress={() => navigation.push('Details', { itemId: Math.floor(Math.random() * 100) })}
-      />
-      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
-      <Button title="Go back" onPress={() => navigation.goBack()} />
-      <Button
-        title="Go back to first screen in stack"
-        onPress={() => navigation.popToTop()}
-      />
+      >
+        Go to Details... again
+      </Button>
+      <Button mode="contained" onPress={() => navigation.navigate('Home')} >Go to Home</Button>
+      <Button mode="contained" onPress={() => navigation.goBack()} >Go back</Button>
+      <Button mode="contained" onPress={() => navigation.popToTop()}>Go back to first screen in stack</Button>
     </View>
+  );
+}
+
+function CustomNavigationBar(props: NativeStackHeaderProps) {
+  const title = getHeaderTitle(props.options, props.route.name);
+
+  return (
+    <Appbar.Header elevated={true}>
+      {props.back ? <Appbar.BackAction onPress={props.navigation.goBack} /> : null}
+      <Appbar.Content title={title} />
+    </Appbar.Header>
   );
 }
 
@@ -91,20 +106,23 @@ function App() {
       <NavigationContainer theme={CombinedDarkTheme}>
         <StatusBar style='auto'></StatusBar>
 
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator
+          initialRouteName="Home"
+          screenOptions={{
+            header: (props) => <CustomNavigationBar {...props} />,
+          }}
+        >
           <Stack.Screen
             name="Home"
             component={HomeScreen}
             options={{
               title: 'Overview',
               headerRight: () => (
-                <Button
-                  onPress={() => alert('This is a button!')}
-                  title="Info"
-                />
+                <Button mode="contained" onPress={() => alert('This is a button!')}>Info</Button>
               )
             }}
           />
+
           <Stack.Screen
             name="Details"
             component={DetailsScreen}

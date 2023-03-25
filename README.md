@@ -6,3 +6,4 @@ Links for Reference:
 - [React Navigation: Type checking with TypeScript](https://reactnavigation.org/docs/typescript/)
 - [Combining Themes with React Native Paper](https://callstack.github.io/react-native-paper/docs/guides/theming-with-react-navigation#combining-theme-objects)
 - [Integrate React Native Paper AppBar with React Navigation](https://callstack.github.io/react-native-paper/docs/guides/react-navigation)
+- [Blog Post: React Navigation v5 + React Native Paper = ❤️](https://reactnavigation.org/blog/2020/01/29/using-react-navigation-5-with-react-native-paper/)
